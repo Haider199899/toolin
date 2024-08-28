@@ -4,7 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // core
 import { resolve } from 'path';
 import { writeFileSync, createWriteStream } from 'fs';
-import { get } from 'http';
+import { get as httpsGet } from 'https';
+import { URL } from 'url';
 
 
 async function bootstrap() {
@@ -27,7 +28,7 @@ async function bootstrap() {
     const serverUrl = "https://toolin.vercel.app/";
 
     // write swagger ui files
-    get(
+    httpsGet(
       `${serverUrl}/swagger/swagger-ui-bundle.js`, function 
       (response) {
         response.pipe(createWriteStream('swagger-static/swagger-ui-bundle.js'));
@@ -36,14 +37,14 @@ async function bootstrap() {
   );
     });
 
-    get(`${serverUrl}/swagger/swagger-ui-init.js`, function (response) {
+    httpsGet(`${serverUrl}/swagger/swagger-ui-init.js`, function (response) {
       response.pipe(createWriteStream('swagger-static/swagger-ui-init.js'));
       console.log(
     `Swagger UI init file written to: '/swagger-static/swagger-ui-init.js'`,
   );
     });
 
-    get(
+    httpsGet(
   `${serverUrl}/swagger/swagger-ui-standalone-preset.js`,
   function (response) {
       response.pipe(
@@ -54,7 +55,7 @@ async function bootstrap() {
     );
     });
 
-    get(`${serverUrl}/swagger/swagger-ui.css`, function (response) {
+    httpsGet(`${serverUrl}/swagger/swagger-ui.css`, function (response) {
       response.pipe(createWriteStream('swagger-static/swagger-ui.css'));
       console.log(
     `Swagger UI css file written to: '/swagger-static/swagger-ui.css'`,
