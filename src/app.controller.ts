@@ -10,6 +10,6 @@ export class AppController {
   constructor() {}
   @Get("version")
   getHealthVersion(): Version {
-    return { version: "0.1" };
+    return { version: "0.1x" };
   }
 }
