@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import * as dotenv from 'dotenv';
+import { never } from 'rxjs';
 
 dotenv.config();
 @Injectable()
@@ -12,6 +13,18 @@ export class StripePaymentService {
       apiVersion: '2024-06-20',
     });
   }
+  //Create customer
+  async createStripeCustomer(email: string, name: string): Promise<Stripe.Customer> {
+    try {
+      console.log("creating customer")
+      return await this.stripe.customers.create({ 
+        email,
+        name,
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to create Stripe customer');
+    }
+  }
 
   // Create a payment intent
   async createPaymentIntent(amount: number, currency: string, paymentMethodId?: string, customerId?: string): Promise<Stripe.PaymentIntent> {
@@ -21,6 +34,10 @@ export class StripePaymentService {
       payment_method: paymentMethodId,
       customer: customerId,
       confirm: true,
+      automatic_payment_methods : {
+        enabled : true,
+        allow_redirects : 'never'
+      }
     });
   }
 
