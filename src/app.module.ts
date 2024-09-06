@@ -5,6 +5,7 @@ import { AuthModule } from './core-modules/auth/auth.module';
 import { StripePaymentService } from './shared/stripe/stripe-service';
 import { UserModule } from './core-modules/user/user.module';
 import { ToolsModule } from './core-modules/tool/tool.module';
+import { BookingModule } from './booking/booking.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,7 +14,8 @@ dotenv.config();
   imports: [
     AuthModule,
     UserModule,
-    ToolsModule
+    ToolsModule,
+    BookingModule
   ],
   controllers: [
     AuthController,

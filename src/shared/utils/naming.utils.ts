@@ -8,3 +8,7 @@ export const getFirstAndLastName = (name) => {
 
     return { firstName, lastName };
 };
+
+export const getFullName = (firstName : string,lastName : string) => {
+    return `${firstName} ${lastName}`
+}
