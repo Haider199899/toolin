@@ -10,14 +10,14 @@ async function bootstrap() {
     app.enableCors();
     app.useGlobalPipes(new common_1.ValidationPipe({ transform: true }));
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Toolin-mine')
-        .setDescription('Toolin-mine API description')
+        .setTitle('Toolin')
+        .setDescription('Toolin API description')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('swagger', app, document, {
-        customSiteTitle: 'Api Docs',
+        customSiteTitle: 'Toolin API Doc',
         customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
         customJs: [
             'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
