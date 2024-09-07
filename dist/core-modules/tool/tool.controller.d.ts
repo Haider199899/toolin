@@ -1,0 +1,40 @@
+import { ToolService } from './tool.service';
+import { CreateToolDTO } from './dto/create-tool.dto';
+import { ToolListResponseType } from './types/get-tools-response.type';
+import { CategoryResponseType } from './types/get-categories-response.type';
+import { PaginationDto } from 'src/shared/dtos/pagination-dto';
+import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
+export declare class ToolController {
+    private toolService;
+    constructor(toolService: ToolService);
+    createTool(createToolDto: CreateToolDTO): Promise<{
+        brand: string;
+        model: string;
+        name: string;
+        images: string[];
+        _geoloc: import("./dto/create-tool.dto").GeolocDTO;
+        availableAfter?: number;
+        availableBefore?: number;
+        description?: string;
+        hasInsurance: boolean;
+        insuranceId?: string;
+        isAvailable: boolean;
+        isDeliveryAvailable: boolean;
+        isOperatorAvailable: boolean;
+        isOwnerApproved: boolean;
+        isPublished: boolean;
+        mainImageIdx?: number;
+        marketValue?: string;
+        priceDaily?: number;
+        priceMonthly?: number;
+        priceWeekly?: number;
+        streetAddress?: string;
+        category1?: string;
+        category2?: string;
+        category3?: string;
+        id: string;
+    }>;
+    getCategoriesList(): Promise<CategoryResponseType>;
+    getToolById(id: string): Promise<FirebaseFirestore.DocumentData>;
+    getTools(toolList: PaginationDto): Promise<IPaginatedData<ToolListResponseType>>;
+}
