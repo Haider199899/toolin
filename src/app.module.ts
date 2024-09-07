@@ -15,7 +15,7 @@ dotenv.config();
     AuthModule,
     UserModule,
     ToolsModule,
-    BookingModule
+    //BookingModule
   ],
   controllers: [
     AuthController,

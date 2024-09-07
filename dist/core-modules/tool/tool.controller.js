@@ -16,8 +16,9 @@ exports.ToolController = void 0;
 const common_1 = require("@nestjs/common");
 const tool_service_1 = require("./tool.service");
 const swagger_1 = require("@nestjs/swagger");
-const create_category_dto_1 = require("./dto/create-category.dto");
 const create_tool_dto_1 = require("./dto/create-tool.dto");
+const get_tools_response_type_1 = require("./types/get-tools-response.type");
+const pagination_dto_1 = require("../../shared/dtos/pagination-dto");
 let ToolController = class ToolController {
     constructor(toolService) {
         this.toolService = toolService;
@@ -31,24 +32,18 @@ let ToolController = class ToolController {
     async getToolById(id) {
         return this.toolService.getTool(id);
     }
-    async getTools(category) {
-        if (!category) {
-            throw new common_1.BadRequestException('Category not provided!');
-        }
-        return this.toolService.getTools(category);
-    }
-    async createCategories(categories) {
-        await this.toolService.createCategories(categories);
-        return {
-            message: 'Successfully created!'
-        };
+    async getTools(toolList) {
+        return this.toolService.getTools(toolList);
     }
 };
 exports.ToolController = ToolController;
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new tool' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'The tool has been successfully created.' }),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'The tool has been successfully created.',
+    }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad Request.' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -75,27 +70,18 @@ __decorate([
 ], ToolController.prototype, "getToolById", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get a list of tools by category' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Tools retrieved successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad Request.' }),
-    (0, swagger_1.ApiQuery)({ name: 'category', required: true, description: 'Category of tools to retrieve' }),
-    __param(0, (0, common_1.Query)('category')),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a list of tools' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Tools retrieved successfully.',
+        type: get_tools_response_type_1.ToolListResponseType,
+    }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Not found' }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [pagination_dto_1.PaginationDto]),
     __metadata("design:returntype", Promise)
 ], ToolController.prototype, "getTools", null);
-__decorate([
-    (0, common_1.Post)('categories'),
-    (0, swagger_1.ApiOperation)({ summary: 'Create categories' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Categories created successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad Request.' }),
-    (0, swagger_1.ApiBody)({ type: [create_category_dto_1.CreateCategoryDto] }),
-    (0, common_1.UsePipes)(common_1.ValidationPipe),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Array]),
-    __metadata("design:returntype", Promise)
-], ToolController.prototype, "createCategories", null);
 exports.ToolController = ToolController = __decorate([
     (0, swagger_1.ApiTags)('Tool'),
     (0, common_1.Controller)('tool'),

@@ -14,7 +14,6 @@ const auth_module_1 = require("./core-modules/auth/auth.module");
 const stripe_service_1 = require("./shared/stripe/stripe-service");
 const user_module_1 = require("./core-modules/user/user.module");
 const tool_module_1 = require("./core-modules/tool/tool.module");
-const booking_module_1 = require("./booking/booking.module");
 const dotenv = require("dotenv");
 dotenv.config();
 let AppModule = class AppModule {
@@ -26,7 +25,6 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             tool_module_1.ToolsModule,
-            booking_module_1.BookingModule
         ],
         controllers: [
             auth_controller_1.AuthController,

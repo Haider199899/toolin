@@ -1,6 +1,9 @@
 import { AuthService } from '../../core-modules/auth/auth.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateToolDTO } from './dto/create-tool.dto';
+import { ToolListResponseType } from './types/get-tools-response.type';
+import { CategoryResponseType } from './types/get-categories-response.type';
+import { PaginationDto } from 'src/shared/dtos/pagination-dto';
+import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
 export declare class ToolService {
     private readonly authService;
     private categoriesCollection;
@@ -11,19 +14,30 @@ export declare class ToolService {
         model: string;
         name: string;
         images: string[];
-        category: string;
-        condition: string;
-        marketValue: string;
-        priceDaily: string;
-        priceMonthly: string;
-        priceWeekly: string;
+        _geoloc: import("./dto/create-tool.dto").GeolocDTO;
+        availableAfter?: number;
+        availableBefore?: number;
+        description?: string;
+        hasInsurance: boolean;
+        insuranceId?: string;
+        isAvailable: boolean;
+        isDeliveryAvailable: boolean;
+        isOperatorAvailable: boolean;
+        isOwnerApproved: boolean;
+        isPublished: boolean;
+        mainImageIdx?: number;
+        marketValue?: string;
+        priceDaily?: number;
+        priceMonthly?: number;
+        priceWeekly?: number;
+        streetAddress?: string;
+        category1?: string;
+        category2?: string;
+        category3?: string;
         id: string;
     }>;
     getTool(id: string): Promise<FirebaseFirestore.DocumentData>;
-    getTools(category: string): Promise<{
-        id: string;
-    }[]>;
-    createCategories(categories: CreateCategoryDto[]): Promise<void>;
-    getCategoriesList(): Promise<object[]>;
+    getTools(paginationDto: PaginationDto): Promise<IPaginatedData<ToolListResponseType>>;
+    getCategoriesList(): Promise<CategoryResponseType>;
     findTool(toolId: string): Promise<any>;
 }

@@ -13,27 +13,18 @@ exports.ToolService = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("../../core-modules/auth/auth.service");
 const firebase_config_1 = require("../../config/firebase-config");
-const tracking_fields_1 = require("../../shared/utils/tracking-fields");
 let ToolService = class ToolService {
     constructor(authService) {
         this.authService = authService;
-        this.categoriesCollection = firebase_config_1.db.collection("categories");
+        this.categoriesCollection = firebase_config_1.db.collection('categories');
         this.toolsCollection = firebase_config_1.db.collection('tools');
     }
     async create(createToolDto) {
-        const categorySnapShot = await this.categoriesCollection
-            .where('name', '==', createToolDto.category).limit(1)
-            .get();
-        if (categorySnapShot.empty) {
-            throw new common_1.NotFoundException('category not found!');
-        }
-        const doc = categorySnapShot.docs[0];
-        const additionalParameters = {
-            categoryId: doc.id,
-            ...tracking_fields_1.trackingDates
-        };
         const toolDoc = this.toolsCollection.doc();
-        await toolDoc.set({ ...createToolDto, ...additionalParameters });
+        await toolDoc.set({
+            ...createToolDto,
+            createdOn: new Date().toISOString(),
+        });
         return { id: toolDoc.id, ...createToolDto };
     }
     async getTool(id) {
@@ -43,39 +34,54 @@ let ToolService = class ToolService {
         }
         return toolDoc.data();
     }
-    async getTools(category) {
-        const toolsSnapshot = await this.toolsCollection.where('category', '==', category).get();
-        if (toolsSnapshot.empty) {
-            throw new common_1.NotFoundException('Tools not found');
-        }
-        return toolsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    }
-    async createCategories(categories) {
-        const batch = firebase_config_1.db.batch();
-        for (const category of categories) {
-            const existingCategory = await this.categoriesCollection
-                .where('name', '==', category.name)
+    async getTools(paginationDto) {
+        try {
+            const toolsSnapshot = await this.toolsCollection
+                .limit(paginationDto.limit)
+                .offset(paginationDto.offset)
                 .get();
-            if (!existingCategory.empty) {
-                continue;
+            if (toolsSnapshot.empty) {
+                throw new common_1.NotFoundException('Tools not found');
             }
-            const categoryRef = this.categoriesCollection.doc();
-            batch.set(categoryRef, { ...category, ...tracking_fields_1.trackingDates });
+            const toolsList = toolsSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            const totalTools = (await this.toolsCollection.get()).size;
+            return {
+                data: toolsList,
+                pagination: {
+                    limit: paginationDto.limit,
+                    offset: paginationDto.offset,
+                    count: totalTools,
+                },
+            };
         }
-        await batch.commit();
+        catch (error) {
+            throw new Error(error);
+        }
     }
     async getCategoriesList() {
-        const snapshot = await this.categoriesCollection.get();
-        const categories = [];
-        snapshot.forEach(doc => {
-            categories.push({ id: doc.id, ...doc.data() });
+        const snapshot = await this.toolsCollection.get();
+        const category1Set = new Set();
+        const category2Set = new Set();
+        const category3Set = new Set();
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.category1)
+                category1Set.add(data.category1);
+            if (data.category2)
+                category2Set.add(data.category2);
+            if (data.category3)
+                category3Set.add(data.category3);
         });
-        return categories;
+        const category1 = Array.from(category1Set);
+        const category2 = Array.from(category2Set);
+        const category3 = Array.from(category3Set);
+        return { category1, category2, category3 };
     }
     async findTool(toolId) {
-        const toolDoc = await this.toolsCollection
-            .where('id', '==', toolId)
-            .get();
+        const toolDoc = await this.toolsCollection.where('id', '==', toolId).get();
         if (toolDoc.empty) {
             throw new common_1.NotFoundException(`Tool Not found.`);
         }
