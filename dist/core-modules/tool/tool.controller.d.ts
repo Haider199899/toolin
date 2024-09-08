@@ -2,8 +2,8 @@ import { ToolService } from './tool.service';
 import { CreateToolDTO } from './dto/create-tool.dto';
 import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
-import { PaginationDto } from 'src/shared/dtos/pagination-dto';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
+import { GetToolDTO } from './dto/get-tool.dto';
 export declare class ToolController {
     private toolService;
     constructor(toolService: ToolService);
@@ -36,5 +36,5 @@ export declare class ToolController {
     }>;
     getCategoriesList(): Promise<CategoryResponseType>;
     getToolById(id: string): Promise<FirebaseFirestore.DocumentData>;
-    getTools(toolList: PaginationDto): Promise<IPaginatedData<ToolListResponseType>>;
+    getTools(toolList: GetToolDTO): Promise<IPaginatedData<ToolListResponseType>>;
 }

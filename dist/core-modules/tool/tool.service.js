@@ -34,32 +34,52 @@ let ToolService = class ToolService {
         }
         return toolDoc.data();
     }
-    async getTools(paginationDto) {
-        try {
-            const toolsSnapshot = await this.toolsCollection
-                .limit(paginationDto.limit)
-                .offset(paginationDto.offset)
-                .get();
-            if (toolsSnapshot.empty) {
-                throw new common_1.NotFoundException('Tools not found');
+    async getTools(toolList) {
+        let query = this.toolsCollection;
+        if (toolList.lat !== null || toolList.lng !== null) {
+            const hasLocation = this.isLocationProvided(toolList.lat, toolList.lng);
+            if (hasLocation) {
+                query = query
+                    .where('_geoloc.lat', '==', toolList.lat)
+                    .where('_geoloc.lng', '==', toolList.lng);
             }
-            const toolsList = toolsSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            const totalTools = (await this.toolsCollection.get()).size;
-            return {
-                data: toolsList,
-                pagination: {
-                    limit: paginationDto.limit,
-                    offset: paginationDto.offset,
-                    count: totalTools,
-                },
-            };
+            else {
+                throw new common_1.BadRequestException('Both lat and lng must be provided together.');
+            }
         }
-        catch (error) {
-            throw new Error(error);
+        if (toolList.name) {
+            query = query.where('name', '==', toolList.name);
         }
+        if (toolList.category1) {
+            query = query.where('category1', '==', toolList.category1);
+        }
+        if (toolList.category2) {
+            query = query.where('category2', '==', toolList.category2);
+        }
+        if (toolList.category3) {
+            query = query.where('category3', '==', toolList.category3);
+        }
+        const toolsSnapshot = await query.get();
+        if (toolsSnapshot.empty) {
+            throw new common_1.NotFoundException('Tools not found');
+        }
+        const totalTools = toolsSnapshot.size;
+        const paginatedQuery = query
+            .limit(toolList.limit)
+            .offset(toolList.offset);
+        const paginatedSnapshot = await paginatedQuery.get();
+        const toolsList = paginatedSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        return {
+            data: toolsList,
+            pagination: {
+                limit: toolList.limit,
+                offset: toolList.offset,
+                count: totalTools,
+            },
+        };
     }
     async getCategoriesList() {
         const snapshot = await this.toolsCollection.get();
@@ -86,6 +106,21 @@ let ToolService = class ToolService {
             throw new common_1.NotFoundException(`Tool Not found.`);
         }
         return toolDoc;
+    }
+    isLocationProvided(lat, lng) {
+        console.log('xxx');
+        if (lat !== null && lng !== null) {
+            console.log('1');
+            return true;
+        }
+        if (lat === null && lng !== null) {
+            console.log('2');
+            return false;
+        }
+        if (lat !== null && lng === null) {
+            console.log('3');
+            return false;
+        }
     }
 };
 exports.ToolService = ToolService;
