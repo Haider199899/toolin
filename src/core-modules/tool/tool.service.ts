@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthService } from '../../core-modules/auth/auth.service';
 import { db } from '../../config/firebase-config';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -8,6 +12,7 @@ import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
 import { PaginationDto } from 'src/shared/dtos/pagination-dto';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
+import { GetToolDTO } from './dto/get-tool.dto';
 
 @Injectable()
 export class ToolService {
@@ -36,43 +41,73 @@ export class ToolService {
   }
 
   async getTools(
-    paginationDto: PaginationDto,
+    toolList: GetToolDTO,
   ): Promise<IPaginatedData<ToolListResponseType>> {
-    try {
-      // Fetch the tools with pagination
-      const toolsSnapshot = await this.toolsCollection
-        .limit(paginationDto.limit)
-        .offset(paginationDto.offset)
-        .get();
-
+      let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
+        this.toolsCollection;
+      // Check and apply lat/lng filter
+      if (toolList.lat !== null || toolList.lng !== null) {
+        const hasLocation = this.isLocationProvided(toolList.lat, toolList.lng);
+        if (hasLocation) {
+          query = query
+            .where('_geoloc.lat', '==', toolList.lat)
+            .where('_geoloc.lng', '==', toolList.lng);
+        } else {
+          throw new BadRequestException(
+            'Both lat and lng must be provided together.',
+          );
+        }
+      }
+  
+      if (toolList.name) {
+        query = query.where('name', '==', toolList.name);
+      }
+      if (toolList.category1) {
+        query = query.where('category1', '==', toolList.category1);
+      }
+      if (toolList.category2) {
+        query = query.where('category2', '==', toolList.category2);
+      }
+      if (toolList.category3) {
+        query = query.where('category3', '==', toolList.category3);
+      }
+  
+      // Execute the query without limit and offset for counting purposes
+      const toolsSnapshot = await query.get();
+  
       // Check if the snapshot is empty
       if (toolsSnapshot.empty) {
         throw new NotFoundException('Tools not found');
       }
-
+  
+      // Get the total count of documents that match the filters
+      const totalTools = toolsSnapshot.size;
+  
+      // Apply limit and offset at the end
+      const paginatedQuery = query
+        .limit(toolList.limit)
+        .offset(toolList.offset);
+      const paginatedSnapshot = await paginatedQuery.get();
+  
       // Map the documents to an array of tool data
-      const toolsList: ToolListResponseType[] = toolsSnapshot.docs.map(
+      const toolsList: ToolListResponseType[] = paginatedSnapshot.docs.map(
         (doc) => ({
           id: doc.id,
           ...doc.data(),
         }),
       ) as ToolListResponseType[];
-
-      // Get the total count of documents
-      const totalTools = (await this.toolsCollection.get()).size;
-
+  
       return {
         data: toolsList,
         pagination: {
-          limit: paginationDto.limit,
-          offset: paginationDto.offset,
+          limit: toolList.limit,
+          offset: toolList.offset,
           count: totalTools,
         },
       };
-    } catch (error) {
-      throw new Error(error); // Rethrow error to handle it further up the call stack
-    }
-  }
+    } 
+  
+  
 
   async getCategoriesList(): Promise<CategoryResponseType> {
     const snapshot = await this.toolsCollection.get();
@@ -103,5 +138,17 @@ export class ToolService {
       throw new NotFoundException(`Tool Not found.`);
     }
     return toolDoc;
+  }
+
+  private isLocationProvided(lat: number, lng: number): boolean {
+    if (lat !== null && lng !== null) {
+      return true;
+    }
+    if (lat === null && lng !== null) {
+      return false;
+    }
+    if (lat !== null && lng === null) {
+      return false;
+    }
   }
 }

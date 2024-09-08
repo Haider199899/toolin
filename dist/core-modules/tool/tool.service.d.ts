@@ -2,8 +2,8 @@ import { AuthService } from '../../core-modules/auth/auth.service';
 import { CreateToolDTO } from './dto/create-tool.dto';
 import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
-import { PaginationDto } from 'src/shared/dtos/pagination-dto';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
+import { GetToolDTO } from './dto/get-tool.dto';
 export declare class ToolService {
     private readonly authService;
     private categoriesCollection;
@@ -37,7 +37,8 @@ export declare class ToolService {
         id: string;
     }>;
     getTool(id: string): Promise<FirebaseFirestore.DocumentData>;
-    getTools(paginationDto: PaginationDto): Promise<IPaginatedData<ToolListResponseType>>;
+    getTools(toolList: GetToolDTO): Promise<IPaginatedData<ToolListResponseType>>;
     getCategoriesList(): Promise<CategoryResponseType>;
     findTool(toolId: string): Promise<any>;
+    private isLocationProvided;
 }

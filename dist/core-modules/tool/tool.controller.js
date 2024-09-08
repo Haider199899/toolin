@@ -18,7 +18,7 @@ const tool_service_1 = require("./tool.service");
 const swagger_1 = require("@nestjs/swagger");
 const create_tool_dto_1 = require("./dto/create-tool.dto");
 const get_tools_response_type_1 = require("./types/get-tools-response.type");
-const pagination_dto_1 = require("../../shared/dtos/pagination-dto");
+const get_tool_dto_1 = require("./dto/get-tool.dto");
 let ToolController = class ToolController {
     constructor(toolService) {
         this.toolService = toolService;
@@ -33,6 +33,7 @@ let ToolController = class ToolController {
         return this.toolService.getTool(id);
     }
     async getTools(toolList) {
+        console.log(toolList);
         return this.toolService.getTools(toolList);
     }
 };
@@ -77,9 +78,10 @@ __decorate([
         type: get_tools_response_type_1.ToolListResponseType,
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Not found' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad Request Exception' }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [pagination_dto_1.PaginationDto]),
+    __metadata("design:paramtypes", [get_tool_dto_1.GetToolDTO]),
     __metadata("design:returntype", Promise)
 ], ToolController.prototype, "getTools", null);
 exports.ToolController = ToolController = __decorate([
