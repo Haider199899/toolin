@@ -1,6 +1,8 @@
 import admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
-
+import { FireSQL } from 'firesql';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 dotenv.config();
 
 admin.initializeApp({
@@ -11,6 +13,7 @@ admin.initializeApp({
   }),
   databaseURL: 'https://(default).firebaseio.com',
 });
+export const fireSQL = new FireSQL(admin.firestore());
 
 export const auth = admin.auth();
 export const db = admin.firestore();
