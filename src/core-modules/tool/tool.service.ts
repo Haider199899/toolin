@@ -3,22 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthService } from '../../core-modules/auth/auth.service';
 import { db } from '../../config/firebase-config';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateToolDTO } from './dto/create-tool.dto';
-import { trackingDates } from '../../shared/utils/tracking-fields';
 import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
-import { PaginationDto } from 'src/shared/dtos/pagination-dto';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
 import { GetToolDTO } from './dto/get-tool.dto';
 
 @Injectable()
 export class ToolService {
-  private categoriesCollection = db.collection('categories');
   private toolsCollection = db.collection('tools');
-  constructor(private readonly authService: AuthService) {}
+  constructor() {}
 
   async create(createToolDto: CreateToolDTO) {
     // Add the new tool document to Firestore
@@ -43,72 +38,97 @@ export class ToolService {
   async getTools(
     toolList: GetToolDTO,
   ): Promise<IPaginatedData<ToolListResponseType>> {
-      let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
-        this.toolsCollection;
-      // Check and apply lat/lng filter
-      if (toolList.lat !== null || toolList.lng !== null) {
-        const hasLocation = this.isLocationProvided(toolList.lat, toolList.lng);
-        if (hasLocation) {
-          query = query
-            .where('_geoloc.lat', '==', toolList.lat)
-            .where('_geoloc.lng', '==', toolList.lng);
-        } else {
-          throw new BadRequestException(
-            'Both lat and lng must be provided together.',
-          );
-        }
+    let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
+      this.toolsCollection;
+    // Check and apply lat/lng filter
+    if (toolList.lat !== null || toolList.lng !== null) {
+      const hasLocation = this.isLocationProvided(toolList.lat, toolList.lng);
+      if (hasLocation) {
+        query = query
+          .where('_geoloc.lat', '==', toolList.lat)
+          .where('_geoloc.lng', '==', toolList.lng);
+      } else {
+        throw new BadRequestException(
+          'Both lat and lng must be provided together.',
+        );
       }
-  
-      if (toolList.name) {
-        query = query.where('name', '==', toolList.name);
-      }
-      if (toolList.category1) {
-        query = query.where('category1', '==', toolList.category1);
-      }
-      if (toolList.category2) {
-        query = query.where('category2', '==', toolList.category2);
-      }
-      if (toolList.category3) {
-        query = query.where('category3', '==', toolList.category3);
-      }
-  
-      // Execute the query without limit and offset for counting purposes
-      const toolsSnapshot = await query.get();
-  
-      // Check if the snapshot is empty
-      if (toolsSnapshot.empty) {
-        throw new NotFoundException('Tools not found');
-      }
-  
-      // Get the total count of documents that match the filters
-      const totalTools = toolsSnapshot.size;
-  
-      // Apply limit and offset at the end
-      const paginatedQuery = query
-        .limit(toolList.limit)
-        .offset(toolList.offset);
-      const paginatedSnapshot = await paginatedQuery.get();
-  
-      // Map the documents to an array of tool data
-      const toolsList: ToolListResponseType[] = paginatedSnapshot.docs.map(
-        (doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }),
-      ) as ToolListResponseType[];
-  
+    }
+
+    if (toolList.name) {
+      query = query
+        .where('name', '>=', toolList.name)
+        .where('name', '<', toolList.name + 'z'); // Using regular quotes and correct syntax
+    }
+    // Apply category filter with OR logic
+    if (toolList.category) {
+      const category = toolList.category;
+      const categoryQueries = [
+        query.where('category1', '==', category),
+        query.where('category2', '==', category),
+        query.where('category3', '==', category),
+      ];
+
+      // Execute all queries and combine results
+      const queryResults = await Promise.all(
+        categoryQueries.map((q) => q.get()),
+      );
+
+      const allDocs = queryResults.flatMap((snapshot) => snapshot.docs);
+      const uniqueDocs = Array.from(new Set(allDocs.map((doc) => doc.id))).map(
+        (id) => allDocs.find((doc) => doc.id === id),
+      );
+
+      // Create a paginated result
+      const limit = toolList.limit ? toolList.limit : 10;
+      const offset = toolList.offset ? toolList.offset : 0;
+
+      // Slice documents for pagination
+      const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
+      const toolsList: ToolListResponseType[] = paginatedDocs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ToolListResponseType[];
+
       return {
         data: toolsList,
         pagination: {
           limit: toolList.limit,
           offset: toolList.offset,
-          count: totalTools,
+          count: uniqueDocs.length,
         },
       };
-    } 
-  
-  
+    }
 
+    // If no category filter, just apply pagination
+    const limit = toolList.limit ? toolList.limit : 10;
+    const offset = toolList.offset ? toolList.offset : 0;
+
+    const toolsSnapshot = await query.limit(limit).offset(offset).get();
+    if (toolsSnapshot.empty) {
+      return {
+        data: [],
+        pagination: {
+          limit: toolList.limit,
+          offset: toolList.offset,
+          count: 0,
+        },
+      };
+    }
+
+    const toolsList: ToolListResponseType[] = toolsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ToolListResponseType[];
+
+    return {
+      data: toolsList,
+      pagination: {
+        limit: toolList.limit,
+        offset: toolList.offset,
+        count: toolsSnapshot.size,
+      },
+    };
+  }
   async getCategoriesList(): Promise<CategoryResponseType> {
     const snapshot = await this.toolsCollection.get();
 

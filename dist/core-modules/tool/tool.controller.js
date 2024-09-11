@@ -33,7 +33,6 @@ let ToolController = class ToolController {
         return this.toolService.getTool(id);
     }
     async getTools(toolList) {
-        console.log(toolList);
         return this.toolService.getTools(toolList);
     }
 };

@@ -11,12 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ToolService = void 0;
 const common_1 = require("@nestjs/common");
-const auth_service_1 = require("../../core-modules/auth/auth.service");
 const firebase_config_1 = require("../../config/firebase-config");
 let ToolService = class ToolService {
-    constructor(authService) {
-        this.authService = authService;
-        this.categoriesCollection = firebase_config_1.db.collection('categories');
+    constructor() {
         this.toolsCollection = firebase_config_1.db.collection('tools');
     }
     async create(createToolDto) {
@@ -48,27 +45,50 @@ let ToolService = class ToolService {
             }
         }
         if (toolList.name) {
-            query = query.where('name', '==', toolList.name);
+            query = query
+                .where('name', '>=', toolList.name)
+                .where('name', '<', toolList.name + 'z');
         }
-        if (toolList.category1) {
-            query = query.where('category1', '==', toolList.category1);
+        if (toolList.category) {
+            const category = toolList.category;
+            const categoryQueries = [
+                query.where('category1', '==', category),
+                query.where('category2', '==', category),
+                query.where('category3', '==', category),
+            ];
+            const queryResults = await Promise.all(categoryQueries.map((q) => q.get()));
+            const allDocs = queryResults.flatMap((snapshot) => snapshot.docs);
+            const uniqueDocs = Array.from(new Set(allDocs.map((doc) => doc.id))).map((id) => allDocs.find((doc) => doc.id === id));
+            const limit = toolList.limit ? toolList.limit : 10;
+            const offset = toolList.offset ? toolList.offset : 0;
+            const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
+            const toolsList = paginatedDocs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            return {
+                data: toolsList,
+                pagination: {
+                    limit: toolList.limit,
+                    offset: toolList.offset,
+                    count: uniqueDocs.length,
+                },
+            };
         }
-        if (toolList.category2) {
-            query = query.where('category2', '==', toolList.category2);
-        }
-        if (toolList.category3) {
-            query = query.where('category3', '==', toolList.category3);
-        }
-        const toolsSnapshot = await query.get();
+        const limit = toolList.limit ? toolList.limit : 10;
+        const offset = toolList.offset ? toolList.offset : 0;
+        const toolsSnapshot = await query.limit(limit).offset(offset).get();
         if (toolsSnapshot.empty) {
-            throw new common_1.NotFoundException('Tools not found');
+            return {
+                data: [],
+                pagination: {
+                    limit: toolList.limit,
+                    offset: toolList.offset,
+                    count: 0,
+                },
+            };
         }
-        const totalTools = toolsSnapshot.size;
-        const paginatedQuery = query
-            .limit(toolList.limit)
-            .offset(toolList.offset);
-        const paginatedSnapshot = await paginatedQuery.get();
-        const toolsList = paginatedSnapshot.docs.map((doc) => ({
+        const toolsList = toolsSnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
         }));
@@ -77,7 +97,7 @@ let ToolService = class ToolService {
             pagination: {
                 limit: toolList.limit,
                 offset: toolList.offset,
-                count: totalTools,
+                count: toolsSnapshot.size,
             },
         };
     }
@@ -108,17 +128,13 @@ let ToolService = class ToolService {
         return toolDoc;
     }
     isLocationProvided(lat, lng) {
-        console.log('xxx');
         if (lat !== null && lng !== null) {
-            console.log('1');
             return true;
         }
         if (lat === null && lng !== null) {
-            console.log('2');
             return false;
         }
         if (lat !== null && lng === null) {
-            console.log('3');
             return false;
         }
     }
@@ -126,6 +142,6 @@ let ToolService = class ToolService {
 exports.ToolService = ToolService;
 exports.ToolService = ToolService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [])
 ], ToolService);
 //# sourceMappingURL=tool.service.js.map

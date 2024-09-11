@@ -1,14 +1,11 @@
-import { AuthService } from '../../core-modules/auth/auth.service';
 import { CreateToolDTO } from './dto/create-tool.dto';
 import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
 import { GetToolDTO } from './dto/get-tool.dto';
 export declare class ToolService {
-    private readonly authService;
-    private categoriesCollection;
     private toolsCollection;
-    constructor(authService: AuthService);
+    constructor();
     create(createToolDto: CreateToolDTO): Promise<{
         brand: string;
         model: string;
