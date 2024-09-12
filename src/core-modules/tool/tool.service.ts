@@ -77,6 +77,7 @@ export class ToolService {
       const uniqueDocs = Array.from(new Set(allDocs.map((doc) => doc.id))).map(
         (id) => allDocs.find((doc) => doc.id === id),
       );
+      const totalCount = uniqueDocs.length;
 
       // Create a paginated result
       const limit = toolList.limit ? toolList.limit : 10;
@@ -94,7 +95,7 @@ export class ToolService {
         pagination: {
           limit: toolList.limit,
           offset: toolList.offset,
-          count: uniqueDocs.length,
+          count: totalCount,
         },
       };
     }
@@ -102,6 +103,10 @@ export class ToolService {
     // If no category filter, just apply pagination
     const limit = toolList.limit ? toolList.limit : 10;
     const offset = toolList.offset ? toolList.offset : 0;
+
+    // Count total records matching the query
+  const countSnapshot = await query.get();
+  const totalCount = countSnapshot.size;
 
     const toolsSnapshot = await query.limit(limit).offset(offset).get();
     if (toolsSnapshot.empty) {
@@ -125,7 +130,7 @@ export class ToolService {
       pagination: {
         limit: toolList.limit,
         offset: toolList.offset,
-        count: toolsSnapshot.size,
+        count: totalCount,
       },
     };
   }

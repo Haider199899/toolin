@@ -59,6 +59,7 @@ let ToolService = class ToolService {
             const queryResults = await Promise.all(categoryQueries.map((q) => q.get()));
             const allDocs = queryResults.flatMap((snapshot) => snapshot.docs);
             const uniqueDocs = Array.from(new Set(allDocs.map((doc) => doc.id))).map((id) => allDocs.find((doc) => doc.id === id));
+            const totalCount = uniqueDocs.length;
             const limit = toolList.limit ? toolList.limit : 10;
             const offset = toolList.offset ? toolList.offset : 0;
             const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
@@ -71,12 +72,14 @@ let ToolService = class ToolService {
                 pagination: {
                     limit: toolList.limit,
                     offset: toolList.offset,
-                    count: uniqueDocs.length,
+                    count: totalCount,
                 },
             };
         }
         const limit = toolList.limit ? toolList.limit : 10;
         const offset = toolList.offset ? toolList.offset : 0;
+        const countSnapshot = await query.get();
+        const totalCount = countSnapshot.size;
         const toolsSnapshot = await query.limit(limit).offset(offset).get();
         if (toolsSnapshot.empty) {
             return {
@@ -97,7 +100,7 @@ let ToolService = class ToolService {
             pagination: {
                 limit: toolList.limit,
                 offset: toolList.offset,
-                count: toolsSnapshot.size,
+                count: totalCount,
             },
         };
     }
