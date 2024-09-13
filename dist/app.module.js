@@ -15,24 +15,17 @@ const stripe_service_1 = require("./shared/stripe/stripe-service");
 const user_module_1 = require("./core-modules/user/user.module");
 const tool_module_1 = require("./core-modules/tool/tool.module");
 const dotenv = require("dotenv");
+const booking_module_1 = require("./core-modules/booking/booking.module");
+const order_module_1 = require("./core-modules/order/order.module");
 dotenv.config();
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            auth_module_1.AuthModule,
-            user_module_1.UserModule,
-            tool_module_1.ToolsModule,
-        ],
-        controllers: [
-            auth_controller_1.AuthController,
-            app_controller_1.AppController,
-        ],
-        providers: [
-            stripe_service_1.StripePaymentService
-        ],
+        imports: [auth_module_1.AuthModule, user_module_1.UserModule, tool_module_1.ToolsModule, booking_module_1.BookingModule, order_module_1.OrdersModule],
+        controllers: [auth_controller_1.AuthController, app_controller_1.AppController],
+        providers: [stripe_service_1.StripePaymentService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

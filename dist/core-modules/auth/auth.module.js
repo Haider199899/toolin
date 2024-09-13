@@ -17,12 +17,10 @@ let AuthModule = class AuthModule {
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            (0, common_1.forwardRef)(() => user_module_1.UserModule)
-        ],
+        imports: [(0, common_1.forwardRef)(() => user_module_1.UserModule)],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, hashing_1.HasingService],
-        exports: [auth_service_1.AuthService]
+        exports: [auth_service_1.AuthService],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

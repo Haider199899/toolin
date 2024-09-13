@@ -11,32 +11,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessPaymentDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const class_validator_1 = require("class-validator");
+class OrderItemDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'The ID of the order',
+        example: '2t7XTc6NZ7r440S9GCAL',
+    }),
+    __metadata("design:type", String)
+], OrderItemDto.prototype, "orderId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'The quantity of items ordered',
+        example: 2,
+    }),
+    __metadata("design:type", Number)
+], OrderItemDto.prototype, "quantity", void 0);
 class ProcessPaymentDto {
 }
 exports.ProcessPaymentDto = ProcessPaymentDto;
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)({
+        description: 'Payment method ID from Stripe or another payment provider',
+        example: 'pm_1J2Ck3DjhT3khf3Jd0Sa4s7J',
+    }),
     __metadata("design:type", String)
-], ProcessPaymentDto.prototype, "bookingId", void 0);
+], ProcessPaymentDto.prototype, "paymentMethodId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], ProcessPaymentDto.prototype, "amount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)({
+        description: 'Currency in which the payment is being made',
+        example: 'USD',
+    }),
     __metadata("design:type", String)
 ], ProcessPaymentDto.prototype, "currency", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], ProcessPaymentDto.prototype, "paymentMethodId", void 0);
+    (0, swagger_1.ApiProperty)({
+        description: 'Array of orders with order ID and quantity',
+        type: [OrderItemDto],
+    }),
+    __metadata("design:type", Array)
+], ProcessPaymentDto.prototype, "orders", void 0);
 //# sourceMappingURL=process-payment.dto.js.map

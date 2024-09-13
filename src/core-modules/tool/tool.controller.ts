@@ -1,10 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ToolService } from './tool.service';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateToolDTO } from './dto/create-tool.dto';
 import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
-import { PaginationDto } from 'src/shared/dtos/pagination-dto';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
 import { GetToolDTO } from './dto/get-tool.dto';
 
@@ -50,7 +49,9 @@ export class ToolController {
   })
   @ApiResponse({ status: 404, description: 'Not found' })
   @ApiResponse({ status: 400, description: 'Bad Request Exception' })
-  async getTools(@Query() toolList: GetToolDTO): Promise<IPaginatedData<ToolListResponseType>> {
+  async getTools(
+    @Query() toolList: GetToolDTO,
+  ): Promise<IPaginatedData<ToolListResponseType>> {
     return this.toolService.getTools(toolList);
   }
 }

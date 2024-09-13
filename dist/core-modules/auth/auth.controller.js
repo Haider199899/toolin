@@ -25,10 +25,10 @@ let AuthController = class AuthController {
     }
     async googleSignIn(idTokenDto) {
         try {
-            const profile = await this.authService.ssoGoogleAndFacebook(idTokenDto, "google");
+            const profile = await this.authService.ssoGoogleAndFacebook(idTokenDto, 'google');
             return {
-                message: "User sign in successfully using Google",
-                profile
+                message: 'User sign in successfully using Google',
+                profile,
             };
         }
         catch (error) {
@@ -37,10 +37,10 @@ let AuthController = class AuthController {
     }
     async facebookSignIn(idTokenDto) {
         try {
-            const profile = await this.authService.ssoGoogleAndFacebook(idTokenDto, "facebook");
+            const profile = await this.authService.ssoGoogleAndFacebook(idTokenDto, 'facebook');
             return {
-                message: "User sign in successfully using Facebook",
-                profile
+                message: 'User sign in successfully using Facebook',
+                profile,
             };
         }
         catch (error) {
@@ -51,7 +51,7 @@ let AuthController = class AuthController {
         try {
             await this.authService.updatePassword(user, updatePassword);
             return {
-                message: "Password updated successfully",
+                message: 'Password updated successfully',
             };
         }
         catch (error) {

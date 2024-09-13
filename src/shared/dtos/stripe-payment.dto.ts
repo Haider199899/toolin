@@ -1,15 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePaymentDTO {
-    @ApiProperty()
-    amount: number;
+  @ApiProperty()
+  amount: number;
 
-    @ApiProperty()
-    currency: string;
+  @ApiProperty()
+  currency: string;
 
-    @ApiProperty()
-    paymentMethodId?: string;
-    
-    @ApiProperty()
-    customerId?: string;
+  @ApiProperty()
+  paymentMethodId?: string;
+
+  @ApiProperty()
+  customerId?: string;
 }

@@ -6,7 +6,7 @@ export declare class UserService {
     private usersCollection;
     constructor(hashService: HasingService);
     createUser(createUserDto: CreateUserDTO): Promise<ICreatedUser>;
-    getUserProfile(uid: string): Promise<object>;
-    findUserById(userId: string): Promise<object>;
+    getUserProfile(uid: string): Promise<any>;
+    findUserById(userId: string): Promise<any>;
     findUserByEmail(email: string): Promise<any | null>;
 }

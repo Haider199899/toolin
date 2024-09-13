@@ -1,5 +1,5 @@
 export const trackingDates = {
-    createdAt : new Date().toISOString(),
-    updatedAt : new Date().toISOString(),
-    deletedAt : null
-}
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  deletedAt: null,
+};

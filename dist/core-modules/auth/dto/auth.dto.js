@@ -74,7 +74,7 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         required: false,
         enum: enums_1.UserRoles,
-        default: enums_1.UserRoles.USER
+        default: enums_1.UserRoles.USER,
     }),
     (0, class_validator_1.IsEnum)(enums_1.UserRoles),
     __metadata("design:type", String)

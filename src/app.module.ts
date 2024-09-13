@@ -5,24 +5,15 @@ import { AuthModule } from './core-modules/auth/auth.module';
 import { StripePaymentService } from './shared/stripe/stripe-service';
 import { UserModule } from './core-modules/user/user.module';
 import { ToolsModule } from './core-modules/tool/tool.module';
-import { BookingModule } from './booking/booking.module';
 import * as dotenv from 'dotenv';
+import { BookingModule } from './core-modules/booking/booking.module';
+import { OrdersModule } from './core-modules/order/order.module';
 
 dotenv.config();
 
 @Module({
-  imports: [
-    AuthModule,
-    UserModule,
-    ToolsModule,
-    //BookingModule
-  ],
-  controllers: [
-    AuthController,
-    AppController,
-  ],
-  providers: [
-    StripePaymentService
-  ],
+  imports: [AuthModule, UserModule, ToolsModule, BookingModule, OrdersModule],
+  controllers: [AuthController, AppController],
+  providers: [StripePaymentService],
 })
 export class AppModule {}

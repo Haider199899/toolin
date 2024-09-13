@@ -15,10 +15,10 @@ const swagger_1 = require("@nestjs/swagger");
 let AppController = class AppController {
     constructor() { }
     getHello() {
-        return { version: "Welcome to Toolin app!" };
+        return { version: 'Welcome to Toolin app!' };
     }
     getHealthVersion() {
-        return { version: "0.1" };
+        return { version: '0.1' };
     }
 };
 exports.AppController = AppController;
@@ -29,14 +29,14 @@ __decorate([
     __metadata("design:returntype", Object)
 ], AppController.prototype, "getHello", null);
 __decorate([
-    (0, common_1.Get)("version"),
+    (0, common_1.Get)('version'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Object)
 ], AppController.prototype, "getHealthVersion", null);
 exports.AppController = AppController = __decorate([
     (0, swagger_1.ApiTags)('health'),
-    (0, common_1.Controller)("health"),
+    (0, common_1.Controller)('health'),
     __metadata("design:paramtypes", [])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

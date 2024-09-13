@@ -8,6 +8,6 @@ export declare class UserController {
     createUser(createUserDto: CreateUserDTO): Promise<UserProfileResponseType>;
     getProfile(user: IIdTokenResponse): Promise<{
         message: string;
-        profile: object;
+        profile: any;
     }>;
 }

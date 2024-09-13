@@ -5,11 +5,9 @@ import { UserModule } from '../user/user.module';
 import { HasingService } from '../../shared/bcrypt/hashing';
 
 @Module({
-  imports: [
-    forwardRef(() => UserModule)
-  ],
+  imports: [forwardRef(() => UserModule)],
   controllers: [AuthController],
-  providers: [AuthService,HasingService],
-  exports : [AuthService]
+  providers: [AuthService, HasingService],
+  exports: [AuthService],
 })
 export class AuthModule {}

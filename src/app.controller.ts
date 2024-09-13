@@ -1,20 +1,20 @@
-import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 export interface Version {
   version: string;
 }
 @ApiTags('health')
-@Controller("health")
+@Controller('health')
 export class AppController {
   constructor() {}
   @Get()
   getHello(): Version {
-    return { version: "Welcome to Toolin app!" };
+    return { version: 'Welcome to Toolin app!' };
   }
 
-  @Get("version")
+  @Get('version')
   getHealthVersion(): Version {
-    return { version: "0.1" };
+    return { version: '0.1' };
   }
 }
