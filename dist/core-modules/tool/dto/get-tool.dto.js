@@ -18,9 +18,7 @@ class GetToolDTO extends pagination_dto_1.PaginationDto {
     constructor() {
         super(...arguments);
         this.name = null;
-        this.category1 = null;
-        this.category2 = null;
-        this.category3 = null;
+        this.category = null;
         this.lat = null;
         this.lng = null;
     }
@@ -37,19 +35,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], GetToolDTO.prototype, "category1", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], GetToolDTO.prototype, "category2", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], GetToolDTO.prototype, "category3", void 0);
+], GetToolDTO.prototype, "category", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_transformer_1.Type)(() => Number),

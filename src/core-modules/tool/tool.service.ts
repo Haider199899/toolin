@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthService } from '../../core-modules/auth/auth.service';
 import { db } from '../../config/firebase-config';
 import { CreateToolDTO } from './dto/create-tool.dto';
 import { ToolListResponseType } from './types/get-tools-response.type';
@@ -13,9 +12,8 @@ import { GetToolDTO } from './dto/get-tool.dto';
 
 @Injectable()
 export class ToolService {
-  private categoriesCollection = db.collection('categories');
   private toolsCollection = db.collection('tools');
-  constructor(private readonly authService: AuthService) {}
+  constructor() {}
 
   async create(createToolDto: CreateToolDTO) {
     // Add the new tool document to Firestore
@@ -57,51 +55,85 @@ export class ToolService {
     }
 
     if (toolList.name) {
-      query = query.where('name', '==', toolList.name);
+      query = query
+        .where('name', '>=', toolList.name)
+        .where('name', '<', toolList.name + 'z'); // Using regular quotes and correct syntax
     }
-    if (toolList.category1) {
-      query = query.where('category1', '==', toolList.category1);
-    }
-    if (toolList.category2) {
-      query = query.where('category2', '==', toolList.category2);
-    }
-    if (toolList.category3) {
-      query = query.where('category3', '==', toolList.category3);
-    }
+    // Apply category filter with OR logic
+    if (toolList.category) {
+      const category = toolList.category;
+      const categoryQueries = [
+        query.where('category1', '==', category),
+        query.where('category2', '==', category),
+        query.where('category3', '==', category),
+      ];
 
-    // Execute the query without limit and offset for counting purposes
-    const toolsSnapshot = await query.get();
+      // Execute all queries and combine results
+      const queryResults = await Promise.all(
+        categoryQueries.map((q) => q.get()),
+      );
 
-    // Check if the snapshot is empty
-    if (toolsSnapshot.empty) {
-      throw new NotFoundException('Tools not found');
-    }
+      const allDocs = queryResults.flatMap((snapshot) => snapshot.docs);
+      const uniqueDocs = Array.from(new Set(allDocs.map((doc) => doc.id))).map(
+        (id) => allDocs.find((doc) => doc.id === id),
+      );
+      const totalCount = uniqueDocs.length;
 
-    // Get the total count of documents that match the filters
-    const totalTools = toolsSnapshot.size;
+      // Create a paginated result
+      const limit = toolList.limit ? toolList.limit : 10;
+      const offset = toolList.offset ? toolList.offset : 0;
 
-    // Apply limit and offset at the end
-    const paginatedQuery = query.limit(toolList.limit).offset(toolList.offset);
-    const paginatedSnapshot = await paginatedQuery.get();
-
-    // Map the documents to an array of tool data
-    const toolsList: ToolListResponseType[] = paginatedSnapshot.docs.map(
-      (doc) => ({
+      // Slice documents for pagination
+      const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
+      const toolsList: ToolListResponseType[] = paginatedDocs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }),
-    ) as ToolListResponseType[];
+      })) as ToolListResponseType[];
+
+      return {
+        data: toolsList,
+        pagination: {
+          limit: toolList.limit,
+          offset: toolList.offset,
+          count: totalCount,
+        },
+      };
+    }
+
+    // If no category filter, just apply pagination
+    const limit = toolList.limit ? toolList.limit : 10;
+    const offset = toolList.offset ? toolList.offset : 0;
+
+    // Count total records matching the query
+  const countSnapshot = await query.get();
+  const totalCount = countSnapshot.size;
+
+    const toolsSnapshot = await query.limit(limit).offset(offset).get();
+    if (toolsSnapshot.empty) {
+      return {
+        data: [],
+        pagination: {
+          limit: toolList.limit,
+          offset: toolList.offset,
+          count: 0,
+        },
+      };
+    }
+
+    const toolsList: ToolListResponseType[] = toolsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ToolListResponseType[];
 
     return {
       data: toolsList,
       pagination: {
         limit: toolList.limit,
         offset: toolList.offset,
-        count: totalTools,
+        count: totalCount,
       },
     };
   }
-
   async getCategoriesList(): Promise<CategoryResponseType> {
     const snapshot = await this.toolsCollection.get();
 

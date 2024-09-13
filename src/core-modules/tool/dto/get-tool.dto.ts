@@ -12,17 +12,7 @@ export class GetToolDTO extends PaginationDto {
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  category1: string = null;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  category2: string = null;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  category3: string = null;
+  category: string = null;
 
   @ApiProperty({ required: false })
   @Type(() => Number)
