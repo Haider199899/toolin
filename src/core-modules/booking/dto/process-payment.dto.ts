@@ -12,12 +12,18 @@ class OrderItemDto {
     example: 2,
   })
   quantity: number;
+
+  @ApiProperty({
+    description: 'The quantity of items ordered',
+    example: 2,
+  })
+  price: number;
 }
 
 export class ProcessPaymentDto {
   @ApiProperty({
     description: 'Payment method ID from Stripe or another payment provider',
-    example: 'pm_1J2Ck3DjhT3khf3Jd0Sa4s7J',
+    example: 'pm_card_visa',
   })
   paymentMethodId: string;
 
@@ -32,4 +38,10 @@ export class ProcessPaymentDto {
     type: [OrderItemDto],
   })
   orders: OrderItemDto[];
+
+  @ApiProperty({
+    description: 'Total charges',
+  })
+  totalAmount: number = null;
+
 }

@@ -25,27 +25,29 @@ let BookingService = class BookingService {
         this.ordersCollection = firebase_config_1.db.collection('orders');
     }
     async processPayment(processPaymentDto) {
-        const { orders, paymentMethodId, currency } = processPaymentDto;
-        let totalAmount = 0;
+        const { orders, paymentMethodId, currency, totalAmount } = processPaymentDto;
         const bookingDetails = [];
         for (const { orderId, quantity } of orders) {
             const orderDoc = await this.ordersCollection.doc(orderId).get();
             if (!orderDoc.exists) {
                 throw new common_1.NotFoundException(`Order not found: ${orderId}`);
             }
-            const orderData = orderDoc.data();
-            const priceBreakdown = orderData.priceBreakdown;
-            const orderTotalPrice = this.calculateOrderTotal(priceBreakdown, quantity);
-            totalAmount += orderTotalPrice;
+            if (!processPaymentDto.totalAmount) {
+                const total = orders.reduce((acc, curr) => {
+                    acc += curr.price * curr.quantity;
+                    return acc;
+                }, 0);
+                processPaymentDto.totalAmount = total;
+            }
             bookingDetails.push({
                 orderId,
                 quantity,
-                totalPrice: orderTotalPrice,
+                totalPrice: processPaymentDto.totalAmount,
             });
         }
         const customerId = await this.stripeService.createStripeCustomer('khan@gmail.com', 'haider123');
         try {
-            const amountInCents = Math.round(totalAmount * 100);
+            const amountInCents = Math.round(processPaymentDto.totalAmount * 100);
             const paymentIntent = await this.stripeService.createPaymentIntent(amountInCents, currency, paymentMethodId, customerId);
             let confirmedPaymentIntent;
             if (paymentIntent.status === 'requires_confirmation') {
@@ -61,7 +63,7 @@ let BookingService = class BookingService {
                 const bookingDocRef = await this.bookingsCollection.add({
                     renterId,
                     orders: bookingDetails,
-                    totalAmount,
+                    totalAmount: processPaymentDto.totalAmount,
                     paymentIntentId: confirmedPaymentIntent.id,
                     createdAt: moment().toISOString(),
                     updatedAt: moment().toISOString(),

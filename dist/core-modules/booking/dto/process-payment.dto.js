@@ -27,13 +27,23 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "quantity", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'The quantity of items ordered',
+        example: 2,
+    }),
+    __metadata("design:type", Number)
+], OrderItemDto.prototype, "price", void 0);
 class ProcessPaymentDto {
+    constructor() {
+        this.totalAmount = null;
+    }
 }
 exports.ProcessPaymentDto = ProcessPaymentDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Payment method ID from Stripe or another payment provider',
-        example: 'pm_1J2Ck3DjhT3khf3Jd0Sa4s7J',
+        example: 'pm_card_visa',
     }),
     __metadata("design:type", String)
 ], ProcessPaymentDto.prototype, "paymentMethodId", void 0);
@@ -51,4 +61,10 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], ProcessPaymentDto.prototype, "orders", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Total charges',
+    }),
+    __metadata("design:type", Number)
+], ProcessPaymentDto.prototype, "totalAmount", void 0);
 //# sourceMappingURL=process-payment.dto.js.map

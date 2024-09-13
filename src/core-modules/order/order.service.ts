@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { db } from '../../config/firebase-config';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 @Injectable()
 export class OrdersService {
   constructor() {}
