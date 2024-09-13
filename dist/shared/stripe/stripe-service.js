@@ -21,16 +21,18 @@ let StripePaymentService = class StripePaymentService {
         });
     }
     async createStripeCustomer(email, name) {
-        try {
-            console.log("creating customer");
-            return await this.stripe.customers.create({
-                email,
-                name,
-            });
+        const customers = await this.stripe.customers.list({
+            email: email,
+            limit: 1,
+        });
+        if (customers.data.length > 0) {
+            return customers.data[0].id;
         }
-        catch (error) {
-            throw new common_1.BadRequestException('Failed to create Stripe customer');
-        }
+        const customer = await this.stripe.customers.create({
+            email,
+            name,
+        });
+        return customer.id;
     }
     async createPaymentIntent(amount, currency, paymentMethodId, customerId) {
         return this.stripe.paymentIntents.create({
@@ -41,8 +43,8 @@ let StripePaymentService = class StripePaymentService {
             confirm: true,
             automatic_payment_methods: {
                 enabled: true,
-                allow_redirects: 'never'
-            }
+                allow_redirects: 'never',
+            },
         });
     }
     async retrievePaymentIntent(paymentIntentId) {

@@ -1,28 +1,27 @@
 import { BookingService } from './booking.service';
-import { CreateBookingDto } from './dto/create-booking.dto';
 import { ProcessPaymentDto } from './dto/process-payment.dto';
 export declare class BookingController {
     private readonly bookingService;
     constructor(bookingService: BookingService);
-    createBooking(createBookingDto: CreateBookingDto): Promise<{
-        toolId: string;
-        userId: string;
-        startDate: string;
-        endDate: string;
-        amount: number;
-        status: string;
-        createdAt: string;
-        id: string;
-    }>;
     processPayment(processPaymentDto: ProcessPaymentDto): Promise<{
         success: boolean;
-        paymentIntentId: string;
+        bookingId: string;
+        paymentIntentId: any;
+        orders: any[];
+        renterId: string;
+        createdAt: string;
+        updatedAt: string;
         requiresAction?: undefined;
         clientSecret?: undefined;
     } | {
         requiresAction: boolean;
-        clientSecret: string;
+        clientSecret: any;
         success?: undefined;
+        bookingId?: undefined;
         paymentIntentId?: undefined;
+        orders?: undefined;
+        renterId?: undefined;
+        createdAt?: undefined;
+        updatedAt?: undefined;
     }>;
 }

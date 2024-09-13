@@ -24,7 +24,11 @@ let UserService = class UserService {
         const password = await this.hashService.hashPassword(createUserDto.password);
         createUserDto.password = password;
         createUserDto.role = createUserDto.role || enums_1.UserRoles.USER;
-        const userRecord = { ...createUserDto, ...tracking_fields_1.trackingDates, authMethod: enums_1.FirebaseAuthProviders.PASSWORD };
+        const userRecord = {
+            ...createUserDto,
+            ...tracking_fields_1.trackingDates,
+            authMethod: enums_1.FirebaseAuthProviders.PASSWORD,
+        };
         await this.usersCollection.doc(createUserDto.uid).set(userRecord);
         delete userRecord.password;
         return userRecord;
@@ -40,7 +44,9 @@ let UserService = class UserService {
         return userFound.data();
     }
     async findUserByEmail(email) {
-        const querySnapshot = await this.usersCollection.where('email', '==', email).get();
+        const querySnapshot = await this.usersCollection
+            .where('email', '==', email)
+            .get();
         if (querySnapshot.empty) {
             throw new common_1.NotFoundException('User not found!');
         }

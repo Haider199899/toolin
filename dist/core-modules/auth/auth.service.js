@@ -29,7 +29,7 @@ let AuthService = class AuthService {
             return {
                 uid: decodedToken.uid,
                 email: decodedToken.email,
-                name: decodedToken.name
+                name: decodedToken.name,
             };
         }
         catch (error) {
@@ -62,7 +62,7 @@ let AuthService = class AuthService {
             address: null,
             role: enums_1.UserRoles.USER,
             authMethod,
-            ...tracking_fields_1.trackingDates
+            ...tracking_fields_1.trackingDates,
         };
         await this.registerUser(createdUser);
         return createdUser;
@@ -71,7 +71,7 @@ let AuthService = class AuthService {
         const userRef = this.usersCollection.doc(user.uid);
         await userRef.update({
             password: updatePassword.newPassword,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
         });
     }
 };

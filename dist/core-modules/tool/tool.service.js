@@ -64,9 +64,7 @@ let ToolService = class ToolService {
             throw new common_1.NotFoundException('Tools not found');
         }
         const totalTools = toolsSnapshot.size;
-        const paginatedQuery = query
-            .limit(toolList.limit)
-            .offset(toolList.offset);
+        const paginatedQuery = query.limit(toolList.limit).offset(toolList.offset);
         const paginatedSnapshot = await paginatedQuery.get();
         const toolsList = paginatedSnapshot.docs.map((doc) => ({
             id: doc.id,
@@ -108,17 +106,13 @@ let ToolService = class ToolService {
         return toolDoc;
     }
     isLocationProvided(lat, lng) {
-        console.log('xxx');
         if (lat !== null && lng !== null) {
-            console.log('1');
             return true;
         }
         if (lat === null && lng !== null) {
-            console.log('2');
             return false;
         }
         if (lat !== null && lng === null) {
-            console.log('3');
             return false;
         }
     }

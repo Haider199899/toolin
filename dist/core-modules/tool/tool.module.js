@@ -20,7 +20,13 @@ exports.ToolsModule = ToolsModule;
 exports.ToolsModule = ToolsModule = __decorate([
     (0, common_1.Module)({
         controllers: [tool_controller_1.ToolController],
-        providers: [tool_service_1.ToolService, auth_service_1.AuthService, user_service_1.UserService, hashing_1.HasingService, stripe_service_1.StripePaymentService],
+        providers: [
+            tool_service_1.ToolService,
+            auth_service_1.AuthService,
+            user_service_1.UserService,
+            hashing_1.HasingService,
+            stripe_service_1.StripePaymentService,
+        ],
     })
 ], ToolsModule);
 //# sourceMappingURL=tool.module.js.map

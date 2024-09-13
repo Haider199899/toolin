@@ -1,4 +1,4 @@
-import { ICreatedUser } from "../../../shared/interfaces/created-user.interface";
+import { ICreatedUser } from '../../../shared/interfaces/created-user.interface';
 export declare class ResetTokenResponseType {
     resetToken: string;
 }

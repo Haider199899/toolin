@@ -8,6 +8,12 @@ import { StripePaymentService } from '../../shared/stripe/stripe-service';
 
 @Module({
   controllers: [ToolController],
-  providers: [ToolService,AuthService,UserService,HasingService,StripePaymentService],
+  providers: [
+    ToolService,
+    AuthService,
+    UserService,
+    HasingService,
+    StripePaymentService,
+  ],
 })
 export class ToolsModule {}
