@@ -30,7 +30,6 @@ let OrdersController = class OrdersController {
 };
 exports.OrdersController = OrdersController;
 __decorate([
-    (0, common_1.Post)('create'),
     (0, swagger_1.ApiBody)({ type: [create_order_dto_1.CreateOrderDto] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
