@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFullName = exports.getFirstAndLastName = void 0;
+exports.capitalizeFirstLetter = exports.getFullName = exports.getFirstAndLastName = void 0;
 const getFirstAndLastName = (name) => {
     const names = name.split(' ');
     const firstName = names[0] || '';
@@ -12,4 +12,8 @@ const getFullName = (firstName, lastName) => {
     return `${firstName} ${lastName}`;
 };
 exports.getFullName = getFullName;
+const capitalizeFirstLetter = (name) => {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+};
+exports.capitalizeFirstLetter = capitalizeFirstLetter;
 //# sourceMappingURL=naming.utils.js.map

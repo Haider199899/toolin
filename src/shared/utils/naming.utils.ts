@@ -12,3 +12,7 @@ export const getFirstAndLastName = (name) => {
 export const getFullName = (firstName: string, lastName: string) => {
   return `${firstName} ${lastName}`;
 };
+
+export const capitalizeFirstLetter = (name: string) => {
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+};

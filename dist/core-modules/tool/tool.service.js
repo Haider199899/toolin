@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ToolService = void 0;
 const common_1 = require("@nestjs/common");
 const firebase_config_1 = require("../../config/firebase-config");
+const naming_utils_1 = require("../../shared/utils/naming.utils");
 let ToolService = class ToolService {
     constructor() {
         this.toolsCollection = firebase_config_1.db.collection('tools');
@@ -20,6 +21,7 @@ let ToolService = class ToolService {
         const toolDoc = this.toolsCollection.doc();
         await toolDoc.set({
             ...createToolDto,
+            lowercase_name: createToolDto.name.toLowerCase(),
             createdOn: new Date().toISOString(),
         });
         return { id: toolDoc.id, ...createToolDto };
@@ -45,9 +47,8 @@ let ToolService = class ToolService {
             }
         }
         if (toolList.name) {
-            query = query
-                .where('name', '>=', toolList.name)
-                .where('name', '<', toolList.name + 'z');
+            const name = (0, naming_utils_1.capitalizeFirstLetter)(toolList.name);
+            query = query.where('name', '>=', name).where('name', '<', name + 'z');
         }
         if (toolList.category) {
             const category = toolList.category;
@@ -63,10 +64,13 @@ let ToolService = class ToolService {
             const limit = toolList.limit ? toolList.limit : 10;
             const offset = toolList.offset ? toolList.offset : 0;
             const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
-            const toolsList = paginatedDocs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const toolsList = paginatedDocs.map((doc) => {
+                const { lowercase_name, ...rest } = doc.data();
+                return {
+                    id: doc.id,
+                    ...rest,
+                };
+            });
             return {
                 data: toolsList,
                 pagination: {

@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 dotenv.config();
 
-admin.initializeApp({
+export const firebase_admin = admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
     privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
@@ -13,8 +13,7 @@ admin.initializeApp({
   }),
   databaseURL: 'https://(default).firebaseio.com',
 });
-export const fireSQL = new FireSQL(admin.firestore());
-
+export const fireSQL = new FireSQL(firebase_admin.firestore());
 export const auth = admin.auth();
 export const db = admin.firestore();
 export const rtDb = admin.database();

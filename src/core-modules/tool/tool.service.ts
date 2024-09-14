@@ -9,6 +9,7 @@ import { ToolListResponseType } from './types/get-tools-response.type';
 import { CategoryResponseType } from './types/get-categories-response.type';
 import { IPaginatedData } from 'src/shared/interfaces/paginated-data.interface';
 import { GetToolDTO } from './dto/get-tool.dto';
+import { capitalizeFirstLetter } from 'src/shared/utils/naming.utils';
 
 @Injectable()
 export class ToolService {
@@ -21,6 +22,7 @@ export class ToolService {
 
     await toolDoc.set({
       ...createToolDto,
+      lowercase_name: createToolDto.name.toLowerCase(),
       createdOn: new Date().toISOString(), // Add a timestamp for creation
     });
 
@@ -55,9 +57,8 @@ export class ToolService {
     }
 
     if (toolList.name) {
-      query = query
-        .where('name', '>=', toolList.name)
-        .where('name', '<', toolList.name + 'z'); // Using regular quotes and correct syntax
+      const name = capitalizeFirstLetter(toolList.name);
+      query = query.where('name', '>=', name).where('name', '<', name + 'z');
     }
     // Apply category filter with OR logic
     if (toolList.category) {
@@ -85,10 +86,13 @@ export class ToolService {
 
       // Slice documents for pagination
       const paginatedDocs = uniqueDocs.slice(offset, offset + limit);
-      const toolsList: ToolListResponseType[] = paginatedDocs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ToolListResponseType[];
+      const toolsList: ToolListResponseType[] = paginatedDocs.map((doc) => {
+        const { lowercase_name, ...rest } = doc.data(); // Destructure to exclude 'lowercase_name'
+        return {
+          id: doc.id,
+          ...rest, // Spread the rest of the data excluding 'lowercase_name'
+        };
+      }) as ToolListResponseType[];
 
       return {
         data: toolsList,
@@ -105,8 +109,8 @@ export class ToolService {
     const offset = toolList.offset ? toolList.offset : 0;
 
     // Count total records matching the query
-  const countSnapshot = await query.get();
-  const totalCount = countSnapshot.size;
+    const countSnapshot = await query.get();
+    const totalCount = countSnapshot.size;
 
     const toolsSnapshot = await query.limit(limit).offset(offset).get();
     if (toolsSnapshot.empty) {

@@ -3,3 +3,4 @@ export declare const getFirstAndLastName: (name: any) => {
     lastName: any;
 };
 export declare const getFullName: (firstName: string, lastName: string) => string;
+export declare const capitalizeFirstLetter: (name: string) => string;

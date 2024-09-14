@@ -25,7 +25,7 @@ let BookingService = class BookingService {
         this.ordersCollection = firebase_config_1.db.collection('orders');
     }
     async processPayment(processPaymentDto) {
-        const { orders, paymentMethodId, currency, totalAmount } = processPaymentDto;
+        const { orders, paymentMethodId, currency } = processPaymentDto;
         const bookingDetails = [];
         for (const { orderId, quantity } of orders) {
             const orderDoc = await this.ordersCollection.doc(orderId).get();
