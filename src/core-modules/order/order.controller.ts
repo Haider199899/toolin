@@ -1,5 +1,5 @@
 // src/orders/orders.controller.ts
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { OrdersService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ApiBody, ApiTags } from "@nestjs/swagger";
@@ -15,11 +15,11 @@ export class OrdersController {
     return this.ordersService.createOrder(createOrderDto);
   }
 
-  //@Get(':userId/:orderId')
+  @Get(':orderId')
   async getOrderByUserIdAndOrderId(
-    @Param('userId') userId: string,
+    //@Param('userId') userId: string,
     @Param('orderId') orderId: string,
   ) {
-    return this.ordersService.getOrderByUserIdAndOrderId(userId, orderId);
+    return this.ordersService.getOrderByUserIdAndOrderId( orderId);
   }
 }

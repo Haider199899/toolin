@@ -32,7 +32,7 @@ export class OrdersService {
     return createdOrders;
   }
 
-  async getOrderByUserIdAndOrderId(userId: string, orderId: string) {
+  async getOrderByUserIdAndOrderId( orderId: string) {
     const ordersCollection = db.collection('orders');
     const orderRef = await ordersCollection.doc(orderId).get();
 
@@ -41,9 +41,9 @@ export class OrdersService {
     }
 
     const orderData = orderRef.data();
-    if (orderData.renterId !== userId) {
-      throw new Error('User does not have access to this order');
-    }
+    // if (orderData.renterId !== userId) {
+    //   throw new Error('User does not have access to this order');
+    // }
 
     return { id: orderId, ...orderData };
   }

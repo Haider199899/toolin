@@ -30,16 +30,13 @@ let OrdersService = class OrdersService {
         }
         return createdOrders;
     }
-    async getOrderByUserIdAndOrderId(userId, orderId) {
+    async getOrderByUserIdAndOrderId(orderId) {
         const ordersCollection = firebase_config_1.db.collection('orders');
         const orderRef = await ordersCollection.doc(orderId).get();
         if (!orderRef.exists) {
             throw new Error('Order not found');
         }
         const orderData = orderRef.data();
-        if (orderData.renterId !== userId) {
-            throw new Error('User does not have access to this order');
-        }
         return { id: orderId, ...orderData };
     }
 };

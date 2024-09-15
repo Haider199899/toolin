@@ -24,12 +24,13 @@ let OrdersController = class OrdersController {
     async createOrder(createOrderDto) {
         return this.ordersService.createOrder(createOrderDto);
     }
-    async getOrderByUserIdAndOrderId(userId, orderId) {
-        return this.ordersService.getOrderByUserIdAndOrderId(userId, orderId);
+    async getOrderByUserIdAndOrderId(orderId) {
+        return this.ordersService.getOrderByUserIdAndOrderId(orderId);
     }
 };
 exports.OrdersController = OrdersController;
 __decorate([
+    (0, common_1.Post)('create'),
     (0, swagger_1.ApiBody)({ type: [create_order_dto_1.CreateOrderDto] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -37,10 +38,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "createOrder", null);
 __decorate([
-    __param(0, (0, common_1.Param)('userId')),
-    __param(1, (0, common_1.Param)('orderId')),
+    (0, common_1.Get)(':orderId'),
+    __param(0, (0, common_1.Param)('orderId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "getOrderByUserIdAndOrderId", null);
 exports.OrdersController = OrdersController = __decorate([

@@ -4,7 +4,7 @@ export declare class OrdersController {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
     createOrder(createOrderDto: CreateOrderDto[]): Promise<any[]>;
-    getOrderByUserIdAndOrderId(userId: string, orderId: string): Promise<{
+    getOrderByUserIdAndOrderId(orderId: string): Promise<{
         id: string;
     }>;
 }
