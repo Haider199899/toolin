@@ -7,7 +7,7 @@ import { db } from '../../config/firebase-config';
 import { CreateUserDTO } from '../auth/dto/auth.dto';
 import { ICreatedUser } from '../../shared/interfaces/created-user.interface';
 import { HasingService } from '../../shared/bcrypt/hashing';
-import { FirebaseAuthProviders, UserRoles } from '../../constants/enums';
+import { FirebaseAuthProviders } from '../../constants/enums';
 import { trackingDates } from '../../shared/utils/tracking-fields';
 
 @Injectable()
@@ -21,7 +21,6 @@ export class UserService {
       createUserDto.password,
     );
     createUserDto.password = password;
-    createUserDto.role = createUserDto.role || UserRoles.USER;
     const userRecord = {
       ...createUserDto,
       ...trackingDates,

@@ -3,9 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseAuthProviders = exports.UserRoles = void 0;
 var UserRoles;
 (function (UserRoles) {
-    UserRoles["ADMIN"] = "admin";
-    UserRoles["USER"] = "user";
-    UserRoles["PASSWORD"] = "provider";
+    UserRoles["BUYER"] = "Buyer";
+    UserRoles["PROVIDER"] = "Provider";
 })(UserRoles || (exports.UserRoles = UserRoles = {}));
 var FirebaseAuthProviders;
 (function (FirebaseAuthProviders) {

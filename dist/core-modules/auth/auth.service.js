@@ -13,7 +13,6 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const firebase_config_1 = require("../../config/firebase-config");
 const user_service_1 = require("../user/user.service");
-const enums_1 = require("../../constants/enums");
 const naming_utils_1 = require("../../shared/utils/naming.utils");
 const hashing_1 = require("../../shared/bcrypt/hashing");
 const tracking_fields_1 = require("../../shared/utils/tracking-fields");
@@ -60,7 +59,7 @@ let AuthService = class AuthService {
             email: userData.email,
             password: userData.uid,
             address: null,
-            role: enums_1.UserRoles.USER,
+            role: null,
             authMethod,
             ...tracking_fields_1.trackingDates,
         };

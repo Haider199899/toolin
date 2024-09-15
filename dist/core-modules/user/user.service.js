@@ -23,7 +23,6 @@ let UserService = class UserService {
     async createUser(createUserDto) {
         const password = await this.hashService.hashPassword(createUserDto.password);
         createUserDto.password = password;
-        createUserDto.role = createUserDto.role || enums_1.UserRoles.USER;
         const userRecord = {
             ...createUserDto,
             ...tracking_fields_1.trackingDates,

@@ -1,7 +1,6 @@
 export declare enum UserRoles {
-    ADMIN = "admin",
-    USER = "user",
-    PASSWORD = "provider"
+    BUYER = "Buyer",
+    PROVIDER = "Provider"
 }
 export declare enum FirebaseAuthProviders {
     PASSWORD = "password",

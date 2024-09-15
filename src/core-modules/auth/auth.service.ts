@@ -70,7 +70,7 @@ export class AuthService {
       email: userData.email,
       password: userData.uid, // Use the UID as the password placeholder
       address: null,
-      role: UserRoles.USER,
+      role: null,
       authMethod,
       ...trackingDates,
     };

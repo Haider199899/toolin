@@ -49,10 +49,10 @@ export class CreateUserDTO {
   @ApiProperty({
     required: false,
     enum: UserRoles,
-    default: UserRoles.USER,
+    default: null
   })
   @IsEnum(UserRoles)
-  role: UserRoles = UserRoles.USER;
+  role: UserRoles = null
 }
 
 export class LoginDTO {
