@@ -9,7 +9,7 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  //@Post('create')
+  @Post('create')
   @ApiBody({ type: [CreateOrderDto] })
   async createOrder(@Body() createOrderDto: CreateOrderDto[]) {
     return this.ordersService.createOrder(createOrderDto);
